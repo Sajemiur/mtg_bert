@@ -1,0 +1,44 @@
+name: mtgenv
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.7
+  - asgiref=3.3.1=pyhd8ed1ab_0
+  - cudatoolkit=10.2.89
+  - django=3.1.4=pyhd8ed1ab_0
+  - libblas=3.8.0=21_mkl
+  - libcblas=3.8.0=21_mkl
+  - liblapack=3.8.0=21_mkl
+  - numpy=1.16.*
+  - pandas=0.25.*
+  - pip=20.3.3=pyhd8ed1ab_0
+  - python-dateutil=2.8.1=py_0
+  - python_abi=3.7=1_cp37m
+  - pytz=2020.5=pyhd8ed1ab_0
+  - six=1.15.0=pyh9f0ad1d_0
+  - sqlite=3.34.*
+  - sqlparse=0.4.1=pyh9f0ad1d_0
+  - tqdm=4.50.1=pyh9f0ad1d_0
+  - websockets=8.1
+  - wheel=0.36.2=pyhd3deb0d_0
+  - pip:
+    - chardet==4.0.0
+    - click==7.1.2
+    - djangorestframework==3.12.2
+    - filelock==3.0.12
+    - idna==2.10
+    - joblib==1.0.0
+    - packaging==20.8
+    - psycopg2-binary
+    - pyparsing==2.4.7
+    - regex==2020.11.13
+    - requests==2.25.1
+    - sacremoses==0.0.43
+    - sentencepiece==0.1.94
+    - tokenizers==0.8.1rc2
+    - torch
+    - transformers==3.2.0
+    - urllib3==1.26.2
+    - uvicorn==0.12.3
+

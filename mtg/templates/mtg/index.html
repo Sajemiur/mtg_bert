@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'mtg/styles.css' %}">
+    <title>Magic: the Transforming</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    {% if synergy_card %}
+        <script>
+            ws = new WebSocket('ws://localhost:8000/ws/');
+
+            ws.onopen = function(event) {
+                ws.send("{{ synergy_card }}");
+            };
+
+            ws.onmessage = function(event) {
+                document.getElementById("synergyBox").innerHTML = event.data;
+            };
+        </script>
+    {% endif %}
+    <style>
+        .card_container {
+          text-align: center;
+          width: 290px;
+          height: 412px;
+          font-weight: bold;
+          display: inline-block;
+          padding: 4px;
+        }
+        img {
+          width: 287px;
+          height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <form class="wrap" action="{% url 'mtg:index' %}" method="get">
+        <input class="searchTerm" name="searched" value="{{ searched }}"/>
+        <button type="submit" name="search">Search for synergy</button>
+        <button type="submit" name="lookup">Lookup a card</button>
+    </form>
+    {% if query_error %}
+        <div>No cards found for given query, or too many cards found for searching synergy. Use 'Lookup a card' to find a card of choice.</div>
+    {% elif card_lookup %}
+        {% for card in card_lookup %}
+            <img class="lookup" src="{{ card.img }}" width="336" height="468"/>
+        {% endfor %}
+    {% elif synergy_card %}
+        <div>There will be some synergizing for {{ synergy_card.name }}. There's {{ amount }} to compare.</div>
+        {% csrf_token %}
+        <div id="synergyBox"><img src = "https://media2.giphy.com/media/3oEjI6SIIHBdRxXI40/200.gif" loading="lazy"/></div>
+    {% endif %}
+</body>
+</html>
