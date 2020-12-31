@@ -1,5 +1,5 @@
 mtg_bert is interface for using Bidirectional Encoder Representations from Transformers (BERT) to search for synergies between Magic: the Gathering cards.
-To run it you will need [Anaconda](https://anaconda.org/). [Nvidia'a CUDA](https://developer.nvidia.com/CUDA-zone) is also strongly recommended but not mandatory.<br/>
+To run it you will need [Anaconda](https://anaconda.org/). [Nvidia'a CUDA](https://developer.nvidia.com/CUDA-zone) is also strongly recommended.<br/>
 To download:
 
 ```
