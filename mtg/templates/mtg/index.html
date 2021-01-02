@@ -19,26 +19,29 @@
             };
         </script>
     {% endif %}
-    <style>
-        .card_container {
-          text-align: center;
-          width: 290px;
-          height: 412px;
-          font-weight: bold;
-          display: inline-block;
-          padding: 4px;
-        }
-        img {
-          width: 287px;
-          height: 400px;
-        }
-    </style>
 </head>
 <body>
     <form class="wrap" action="{% url 'mtg:index' %}" method="get">
         <input class="searchTerm" name="searched" value="{{ searched }}"/>
         <button type="submit" name="search">Search for synergy</button>
         <button type="submit" name="lookup">Lookup a card</button>
+        <div class="tooltip">?
+          <span class="tooltiptext">
+              Card can be searched by:</br>
+              - name or part of it</br>
+              - color, prefixing it 'colors:'</br>
+              - converted mana cost, prefixing it 'cmc:'</br>
+              - mana cost, prefixing it 'manaCost:'</br>
+              - sybtype, prefixing it 'subtypes:'</br>
+              - supertype, prefixing it 'supertypes:'</br>
+              - text, prefixing it 'text:'</br>
+              - type, prefixing it 'types:'</br>
+              - power, prefixing it 'power:'</br>
+              - toughness, prefixing it 'toughness:'</br>
+              Also multiple attributes can be listed by splitting it with semicolon (with no spaces between)</br>
+              Eg. Ajani colors:W;G types:planeswalker text:exile;life
+          </span>
+        </div>
     </form>
     {% if query_error %}
         <div>No cards found for given query, or too many cards found for searching synergy. Use 'Lookup a card' to find a card of choice.</div>

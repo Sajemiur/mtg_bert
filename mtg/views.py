@@ -16,33 +16,34 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
-    context = {'amount': len(Card.objects.all())}
+    context = {}
+    query_set = Card.objects.all()
 
     if 'searched' in request.GET:
         context['searched'] = request.GET['searched']
-        kwargs = {"name__startswith": []}
+
         for elem in request.GET['searched'].split(" "):
             for attr in Card.attributes():
                 if elem.startswith(attr + ":"):
-                    kwargs[attr] = elem[len(attr) + 1:]
+                    for splitted in elem[len(attr) + 1:].split(";"):
+                        query = {attr: splitted}
+                        print(query)
+                        query_set = query_set.filter(**query)
                     break
             else:
-                kwargs["name__startswith"].append(elem)
-        kwargs["name__startswith"] = " ".join(kwargs["name__startswith"])
+                query_set = query_set.filter(name__contains=elem)
 
-        if 'lookup' in request.GET:
-            query_set = Card.objects.filter(**kwargs)
-            if len(query_set) == 0:
-                context['query_error'] = True
-            else:
-                context['card_lookup'] = query_set
+    if 'lookup' in request.GET:
+        if len(query_set) == 0:
+            context['query_error'] = True
+        else:
+            context['card_lookup'] = query_set
 
-        elif 'search' in request.GET:
-            query_set = Card.objects.filter(**kwargs)
-            if len(query_set) == 1:
-                context['synergy_card'] = get_object_or_404(Card, **kwargs)
-            else:
-                context['query_error'] = True
+    elif 'search' in request.GET:
+        if len(query_set) == 1:
+            context['synergy_card'] = query_set[0]
+        else:
+            context['query_error'] = True
 
     return render(request, 'mtg/index.html', context)
 
