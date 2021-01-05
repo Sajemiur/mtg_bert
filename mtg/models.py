@@ -34,10 +34,7 @@ class Card(models.Model):
         return self.name
 
     @staticmethod
-    def attributes():
-        return ['name', 'colors', 'cmc', 'manaCost', 'subtypes', 'supertypes', 'text', 'types', 'power', 'toughness']
-
-
-# class Synergy(models.Model):
-#     cards = models.ManyToManyField(Card)
-#     synergy = models.IntegerField(default=40)
+    def query_attributes():
+        return {'name': 'name__contains', 'colors': 'colors__name__iexact', 'cmc': 'cmc', 'manaCost': 'name__iexact',
+                'subtypes': 'subtypes__name__iexact', 'supertypes': 'supertypes__name__iexact', 'text': 'text__contains',
+                'types': 'types__name__iexact', 'power': 'power', 'toughness': 'toughness'}.items()

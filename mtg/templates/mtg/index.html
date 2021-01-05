@@ -1,9 +1,7 @@
 <!DOCTYPE html>
-{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="{% static 'mtg/styles.css' %}">
     <title>Magic: the Transforming</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     {% if synergy_card %}
@@ -19,6 +17,105 @@
             };
         </script>
     {% endif %}
+    <style type="text/css">
+        .searchTerm {
+          width: 100%;
+          border: 3px solid #00B4CC;
+          padding: 5px;
+          height: 20px;
+          border-radius: 12px;
+          outline: none;
+          color: #9DBFAF;
+        }
+
+        .searchTerm:focus{
+          color: #0AA0AA;
+        }
+
+        .wrap{
+          width: 30%;
+          margin: auto;
+          padding: 25px;
+        }
+
+        .lookup{
+          margin: auto;
+          padding: 10px;
+        }
+
+        .tooltip {
+          position: relative;
+          display: inline-block;
+          background-color: blue;
+          border: 2px solid #00B4CC;
+          border-radius: 50%;
+          color: #fff;
+          width: 18px;
+          font-weight: bold;
+          text-align:center;
+        }
+
+        .tooltip .tooltiptext {
+          visibility: hidden;
+          width: 300px;
+          background-color: black;
+          color: #fff;
+          border-radius: 6px;
+          padding: 5px 0;
+          font-weight: normal;
+          text-align: left;
+
+          /* Position the tooltip */
+          position: absolute;
+          z-index: 1;
+        }
+
+        .tooltip:hover .tooltiptext {
+          visibility: visible;
+        }
+
+        .card_container {
+          text-align: center;
+          width: 290px;
+          height: 420px;
+          font-weight: bold;
+          display: inline-block;
+          padding: 4px;
+          overflow: hidden;
+        }
+        .img_container {
+          height: 385px;
+        }
+        img {
+          width: 287px;
+          height: 400px;
+          white-space: pre;
+        }
+        .lds-dual-ring {
+          display: inline-block;
+          width: 80px;
+          height: 80px;
+        }
+        .lds-dual-ring:before {
+          content: " ";
+          display: block;
+          width: 64px;
+          height: 64px;
+          margin: 8px;
+          border-radius: 50%;
+          border: 6px solid #00B4CC;
+          border-color: #00B4CC transparent #00B4CC transparent;
+          animation: lds-dual-ring 1.2s linear infinite;
+        }
+        @keyframes lds-dual-ring {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+    </style>
 </head>
 <body>
     <form class="wrap" action="{% url 'mtg:index' %}" method="get">
@@ -50,9 +147,9 @@
             <img class="lookup" src="{{ card.img }}" width="336" height="468"/>
         {% endfor %}
     {% elif synergy_card %}
-        <div>There will be some synergizing for {{ synergy_card.name }}. There's {{ amount }} to compare.</div>
+        <div>Please wait as there is searching for synergies for {{ synergy_card.name }}. There's {{ amount }} to compare.</div>
         {% csrf_token %}
-        <div id="synergyBox"><img src = "https://media2.giphy.com/media/3oEjI6SIIHBdRxXI40/200.gif" loading="lazy"/></div>
+        <div id="synergyBox"><div class="card_container"><div class="lds-dual-ring"></div></div></div>
     {% endif %}
 </body>
 </html>

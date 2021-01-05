@@ -9,7 +9,7 @@ class WebsocketClass:
     async def websocket_application(self, scope, receive, send):
         while True:
             event = await receive()
-            print("RECEIVED")
+
             if event['type'] == 'websocket.connect':
                 from .mtg_bert import Model
                 predictor = Model()
@@ -18,14 +18,11 @@ class WebsocketClass:
                 await send({
                     'type': 'websocket.accept'
                 })
-                print("done")
 
             elif event['type'] == 'websocket.disconnect':
-                print("diconnect")
                 break
 
             elif event['type'] == 'websocket.receive':
-                print("got here")
                 if event['text'] in self.cache:
                     await send({'type': 'websocket.send',
                                 'text': self.parse_to_html(self.cache[event['text']])})
@@ -39,21 +36,24 @@ class WebsocketClass:
                                         'text': self.parse_to_html(sum, it)})
                             buff = 0
                             it += 0.67
+                            break
+
                     await send({'type': 'websocket.send',
                                 'text': self.parse_to_html(sum)})
                     self.cache[event['text']] = sum
 
-
-
-    def parse_to_html(self, mtg_dict, load_div=-1):
+    @staticmethod
+    def parse_to_html(mtg_dict, load_div=-1):
         ret = ""
-        highest = True
-        for img, ch in sorted(mtg_dict.items(), key=lambda item: float(item[1]), reverse=True):
-            if highest is True:
-                print(ch)
-                highest = False
-            ret += '<div class="card_container"><img src="{}" loading="lazy"/>{}%</div>'.format(img, ch)
+        first = True
+        for name, (img, ch) in sorted(mtg_dict.items(), key=lambda item: float(item[1][1]), reverse=True):
+            if first:
+                ret += '<div class="card_container"><div class="img_container">' \
+                       '<img src="{}" loading="lazy" alt="{}"/></div></br>{}%</div>'.format(404, name, ch)
+                first = False
+            ret += '<div class="card_container"><div class="img_container">'\
+                   '<img src="{}" loading="lazy" alt="{}"/></div></br>{}%</div>'.format(img, name, ch)
             if load_div != -1:
-                ret += '<div class="card_container"><img src="https://media2.giphy.com/media/3oEjI6SIIHBdRxXI40/200.gif" loading="lazy"/></div>'\
-                       * int(0.9 + 7 / load_div)
+                ret += '<div class="card_container"><div class="lds-dual-ring"></div></div>'\
+                       * (1 + int(7 / load_div))
         return ret

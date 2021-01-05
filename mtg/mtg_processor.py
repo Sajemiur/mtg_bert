@@ -26,4 +26,4 @@ def prepare_prediction_data(card):
     df["card_b"] = list(card_concat(elem) for elem in Card.objects.all())
     df["card_a"] = [card_concat(card)] * len(df)
 
-    return [c.img for c in Card.objects.all()], df
+    return [c.name for c in Card.objects.all()], [c.img for c in Card.objects.all()], df

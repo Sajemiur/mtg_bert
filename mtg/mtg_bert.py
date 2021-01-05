@@ -1,17 +1,12 @@
-from pathlib import Path
 import torch
-from torch import Tensor
 import pandas as pd
 import os
 from tqdm import tqdm
 import sys
-import random
 import numpy as np
 from transformers import BertTokenizer, BertForSequenceClassification
-import json
 import mtg.mtg_processor as mtgpre
 from asgiref.sync import sync_to_async
-from functools import lru_cache
 
 from torch.utils.data import TensorDataset, DataLoader, SequentialSampler
 
@@ -94,16 +89,6 @@ def card_concat(card):
     string += (' [LOY] ' + card['loyalty'] if 'loyalty' in card else "")
     string += (' [TXT] ' + card['text'] if 'text' in card else "")
     return string
-
-
-# def get_cards_pairs(card):
-#     with open('sentiment_analyzer/classifier/ShortenedPioneerCards.json', 'r', encoding="utf8") as file:
-#         cards = json.load(file)
-#
-#     df = pd.DataFrame()
-#     df["card_b"] = list(card_concat(elem) for elem in cards.values())
-#     df["card_a"] = [card_concat(cards[card])] * len(df)
-#     return cards.keys(), df
 
 
 def get_test_examples(df):
@@ -223,7 +208,7 @@ class Model:
         self.model.to(self.device)
 
     async def predict(self, card):
-        cards_names, df = await sync_to_async(mtgpre.prepare_prediction_data, thread_sensitive=True)(card)
+        cards_names, cards_imgs, df = await sync_to_async(mtgpre.prepare_prediction_data, thread_sensitive=True)(card)
         test_examples = get_test_examples(df)
 
         test_features = convert_examples_to_features(
@@ -251,7 +236,8 @@ class Model:
                 logits = self.model(input_ids, segment_ids, input_mask)[0]
                 logits = logits.sigmoid()
 
-            yield {cards_names[step * self.batch_size + i]: format(elem[1] * 100, '.2f')
+            yield {cards_names[step * self.batch_size + i]:
+                       (cards_imgs[step * self.batch_size + i], format(elem[1] * 100, '.2f'))
                    for i, elem in enumerate(logits.detach().cpu().numpy())}
 
             if all_logits is None:
@@ -259,4 +245,5 @@ class Model:
             else:
                 all_logits = np.concatenate((all_logits, logits.detach().cpu().numpy()), axis=0)
 
-        pd.DataFrame(all_logits, columns=self.label_list).to_csv('result_django.csv', index=None)
+        pd.DataFrame(all_logits, columns=self.label_list).to_csv('last_search.csv', index=None)
+        pd.merge(pd.DataFrame(cards_names), pd.DataFrame(all_logits, columns=label_list))
