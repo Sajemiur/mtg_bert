@@ -1,10 +1,12 @@
-# from .apps import MtgConfig
 import json
+from html import unescape
 
 
 class WebsocketClass:
     def __init__(self):
         self.cache = {}
+        # from .mtg_bert import Model
+        # self.predictor = Model()
 
     async def websocket_application(self, scope, receive, send):
         while True:
@@ -28,7 +30,8 @@ class WebsocketClass:
                                 'text': self.parse_to_html(self.cache[event['text']])})
                 else:
                     buff = 0
-                    async for batch in predictor.predict(event['text']):
+
+                    async for batch in predictor.predict(unescape(event['text'])):
                         sum.update(batch)
                         buff += 1
                         if buff == int(it):
@@ -36,7 +39,6 @@ class WebsocketClass:
                                         'text': self.parse_to_html(sum, it)})
                             buff = 0
                             it += 0.67
-                            break
 
                     await send({'type': 'websocket.send',
                                 'text': self.parse_to_html(sum)})
@@ -45,12 +47,7 @@ class WebsocketClass:
     @staticmethod
     def parse_to_html(mtg_dict, load_div=-1):
         ret = ""
-        first = True
         for name, (img, ch) in sorted(mtg_dict.items(), key=lambda item: float(item[1][1]), reverse=True):
-            if first:
-                ret += '<div class="card_container"><div class="img_container">' \
-                       '<img src="{}" loading="lazy" alt="{}"/></div></br>{}%</div>'.format(404, name, ch)
-                first = False
             ret += '<div class="card_container"><div class="img_container">'\
                    '<img src="{}" loading="lazy" alt="{}"/></div></br>{}%</div>'.format(img, name, ch)
             if load_div != -1:

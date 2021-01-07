@@ -245,5 +245,5 @@ class Model:
             else:
                 all_logits = np.concatenate((all_logits, logits.detach().cpu().numpy()), axis=0)
 
+        pd.merge(pd.DataFrame(cards_names), pd.DataFrame(all_logits, columns=self.label_list)['entailment'])
         pd.DataFrame(all_logits, columns=self.label_list).to_csv('last_search.csv', index=None)
-        pd.merge(pd.DataFrame(cards_names), pd.DataFrame(all_logits, columns=label_list))

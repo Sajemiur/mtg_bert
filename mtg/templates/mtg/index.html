@@ -141,8 +141,9 @@
         </div>
     </form>
     {% if query_error %}
-        <div>No cards found for given query, or too many cards found for searching synergy. Use 'Lookup a card' to find a card of choice.</div>
-    {% elif card_lookup %}
+        <div>{{ query_error }}</div>
+    {% endif %}
+    {% if card_lookup %}
         {% for card in card_lookup %}
             <img class="lookup" src="{{ card.img }}" width="336" height="468"/>
         {% endfor %}
